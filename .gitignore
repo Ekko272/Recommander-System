@@ -1,0 +1,43 @@
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# IDE settings
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.*
+
+# Temporary files
+temp.csv
+*.log
+*.tmp
+
+# Generated predictions
+*_predictions.csv
+
+# Dataset files
+*_train.csv
+*_test.csv
+
+# Keep source code, notebook, PDF, and writeup tracked
+# assignment1.py
+# baselines.ipynb
+# writeup.txt
+# Assignment 1 2026 (1).pdf

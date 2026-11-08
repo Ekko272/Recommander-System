@@ -1,0 +1,34 @@
+Task 1:
+Ratings are predicted from a shrunk user bias and item bias, plus a correction from the user's other ratings of similar books. 
+Similarity is the cosine of who has read each book, down-weighted when two books have few readers in common, and only the closest neighbors are used. 
+On a held-out slice of the training data this reached MSE 0.709, compared with about 0.74 for biases alone and with the baseline latent-factor model (public 0.743, private 0.774). 
+Predictions are clipped to the rating range [0, 5].
+
+Task 2:
+The model is Bayesian Personalized Ranking: each real interaction is trained to outscore items the user did not read, with negatives drawn in proportion to how often books are read. 
+The ranking score adds how similar a candidate is to the user's history. The mix was chosen on a holdout and reached accuracy 0.919, against the baseline BPR accuracy of about 0.87. 
+The submitted file is produced by retraining that ranker on the full training set and applying the same mix.
+
+Task 3: 
+This uses the task 1 predictor, then lets the timestamp change the neighborhood. 
+Ratings are down-weighted by an exponential decay in the time gap; a one-year scale beat using no decay and beat shorter windows on a holdout (MSE 0.901 versus 0.904 with no decay). 
+A separate bias for each coarse time bin did not help, so it is not used. That is well below the baseline, which ignores time (public 0.982, private 0.958).
+
+Task 4:
+This uses the task 2 ranker, and also compares each candidate to the books that user read nearest the given timestamp. 
+On a holdout the time-local similarity helped and similarity to the full history did not, once the local term was included. 
+Holdout accuracy was 0.863, against the baseline of about 0.80. As in task 2, the ranker is retrained on all interactions before the test file is written.
+
+Task 5:
+The question is which of two books is the user's next one, so the ranker is trained on the order of each user's history rather than on unordered interactions. 
+Each user and each book has a latent vector. The recent books are combined with a learned attention weight (the rightmost slot is the latest book), and that vector plus the user vector is scored against the candidate. 
+Training uses Bayesian Personalized Ranking: the book that actually came next has to outscore books drawn in proportion to popularity. 
+A recency-weighted cosine with the same recent books is added, with the mix chosen on a holdout of each user's latest book. 
+That holdout accuracy was 0.866, against the baseline BPR accuracy of about 0.82. The submitted file uses the ranker retrained on every transition, with the same mix.
+
+Task 6:
+The prediction is how long until the given next book, measured from the user's last training interaction. 
+A linear model is fit to the log gap, which targets the median wait. 
+Features are the user's own pace (median gap, geometric mean, the latest gap, and how often they return within a day), the hour and weekday of the last interaction, and facts about the upcoming book: reader-overlap with the book just finished, how often that transition occurs, how popular the book is, and how long other readers typically waited before starting it. 
+On a holdout of each user's latest gap the mean absolute error was 9.99e6 seconds, compared with 1.21e7 for that user's historical median and with the baseline of about 1.36e7. 
+The submitted predictions refit the same model on every gap in the training sequences.
